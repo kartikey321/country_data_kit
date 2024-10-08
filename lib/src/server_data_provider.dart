@@ -5,7 +5,6 @@ import 'dart:isolate';
 import 'package:country_data_kit/src/extensions.dart';
 import 'package:country_data_kit/src/generated/generated.dart';
 
-
 class ServerDataProvider {
   static final ServerDataProvider _instance = ServerDataProvider._internal();
 
@@ -21,12 +20,12 @@ class ServerDataProvider {
 
   Future<void> initialize() async {
     await Future.wait([
-      _loadData('data/countries.pb',
+      _loadData('assets/protobuf/countries.pb',
           (bytes) => _countries = Countries.fromBuffer(bytes)),
       _loadData(
-          'data/states.pb', (bytes) => _states = States.fromBuffer(bytes)),
+          'assets/protobuf/states.pb', (bytes) => _states = States.fromBuffer(bytes)),
       _loadData(
-          'data/cities.pb', (bytes) => _cities = Cities.fromBuffer(bytes)),
+          'assets/protobuf/cities.pb', (bytes) => _cities = Cities.fromBuffer(bytes)),
     ]);
   }
 
