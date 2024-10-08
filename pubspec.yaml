@@ -1,0 +1,27 @@
+name: country_data_kit
+description: A high-performance Flutter package for handling country, state, and city data using protobuf for efficient data serialization and querying.
+version: 0.0.1
+homepage: https://github.com/kartikey321/country_data_kit
+repository: https://github.com/kartikey321/country_data_kit
+topics:
+  - country
+  - state
+  - city
+  - protobuf
+  - data
+  - flutter
+  - dart
+
+environment:
+  sdk: ^3.5.2
+
+dependencies:
+  crypto: ^3.0.5
+  csv: ^6.0.0
+  flutter:
+    sdk: flutter
+  protobuf: ^3.1.0
+  yaml: ^3.1.2
+  yaml_edit: ^2.2.1
+
+
