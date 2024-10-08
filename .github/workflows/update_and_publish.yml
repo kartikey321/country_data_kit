@@ -86,7 +86,7 @@ jobs:
           git commit -m "Update data to latest version (Source commit date: ${{ steps.check_commits.outputs.commit_date }})"
 
           # Push to GitHub using the PAT
-          git push https://${{ secrets.GITHUB_TOKEN }}@github.com/kartikey321/country_data_kit.git HEAD:main
+          git push https://${{ secrets.PAT }}@github.com/kartikey321/country_data_kit.git HEAD:main
 
       - name: Update README with latest metrics
         if: steps.check_changes.outcome == 'success'
