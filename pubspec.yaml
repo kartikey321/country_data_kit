@@ -8,8 +8,6 @@ topics:
   - state
   - city
   - protobuf
-  - data
-  - flutter
   - dart
 
 environment:
