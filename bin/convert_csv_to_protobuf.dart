@@ -30,8 +30,13 @@ Future<void> convertCountries() async {
     countries.countries.add(country);
   }
 
-  // Save the protobuf file to the correct assets path
-  final output = File('assets/protobuf/countries.pb');
+  // Ensure the directory exists before saving
+  final outputDir = Directory('assets/protobuf');
+  if (!await outputDir.exists()) {
+    await outputDir.create(recursive: true); // Create directory if it doesn't exist
+  }
+
+  final output = File('${outputDir.path}/countries.pb');
   await output.writeAsBytes(countries.writeToBuffer());
 }
 
@@ -52,8 +57,13 @@ Future<void> convertStates() async {
     states.states.add(state);
   }
 
-  // Save the protobuf file to the correct assets path
-  final output = File('assets/protobuf/states.pb');
+  // Ensure the directory exists before saving
+  final outputDir = Directory('assets/protobuf');
+  if (!await outputDir.exists()) {
+    await outputDir.create(recursive: true);
+  }
+
+  final output = File('${outputDir.path}/states.pb');
   await output.writeAsBytes(states.writeToBuffer());
 }
 
@@ -77,7 +87,12 @@ Future<void> convertCities() async {
     cities.cities.add(city);
   }
 
-  // Save the protobuf file to the correct assets path
-  final output = File('assets/protobuf/cities.pb');
+  // Ensure the directory exists before saving
+  final outputDir = Directory('assets/protobuf');
+  if (!await outputDir.exists()) {
+    await outputDir.create(recursive: true);
+  }
+
+  final output = File('${outputDir.path}/cities.pb');
   await output.writeAsBytes(cities.writeToBuffer());
 }
