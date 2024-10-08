@@ -45,7 +45,7 @@ jobs:
           fi
           
           # Compare the commits and check if any CSV files were changed
-          if [ "$LATEST_COMMIT_SHA" != "$LAST_PROCESSED_COMMIT" ] && [ ! -z "$CSV_FILES_CHANGED" ]; then
+          if [ "$LATEST_COMMIT_SHA" != "$LAST_PROCESSED_COMMIT" ] ; then
             echo "New commit detected with changes to CSV files. Proceeding with update."
             echo "Changed files: $CSV_FILES_CHANGED"
             echo "::set-output name=update_needed::true"
