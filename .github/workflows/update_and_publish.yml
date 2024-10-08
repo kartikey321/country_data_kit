@@ -2,8 +2,8 @@ name: Check for updates and publish
 
 on:
   schedule:
-    - cron: '0 0 1 * *'  # Run at midnight on the first day of every month
-  workflow_dispatch:  # Allow manual triggers
+    - cron: "0 0 1 * *" # Run at midnight on the first day of every month
+  workflow_dispatch: # Allow manual triggers
 
 env:
   SOURCE_REPO: "dr5hn/countries-states-cities-database"
@@ -16,8 +16,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          fetch-depth: 0  # Fetch all history for all branches and tags
-      
+          fetch-depth: 0 # Fetch all history for all branches and tags
+
       - name: Set up Dart
         uses: dart-lang/setup-dart@v1
 
@@ -29,21 +29,21 @@ jobs:
         run: |
           # Fetch the latest commit information from the source repository
           LATEST_COMMIT_INFO=$(curl -s "https://api.github.com/repos/${{ env.SOURCE_REPO }}/commits/master")
-          
+
           # Extract the SHA and date of the latest commit
           LATEST_COMMIT_SHA=$(echo $LATEST_COMMIT_INFO | jq -r .sha)
           LATEST_COMMIT_DATE=$(echo $LATEST_COMMIT_INFO | jq -r .commit.committer.date)
-          
+
           # Check if any of the CSV files were modified
           CSV_FILES_CHANGED=$(echo $LATEST_COMMIT_INFO | jq -r '.files[] | select(.filename | inside("${{ env.CSV_FILES }}")) | .filename')
-          
+
           # Read the last processed commit SHA (if it exists)
           if [ -f "${{ env.LAST_COMMIT_FILE }}" ]; then
             LAST_PROCESSED_COMMIT=$(cat "${{ env.LAST_COMMIT_FILE }}")
           else
             LAST_PROCESSED_COMMIT="null"
           fi
-          
+
           # Compare the commits and check if any CSV files were changed
           if [ "$LATEST_COMMIT_SHA" != "$LAST_PROCESSED_COMMIT" ] ; then
             echo "New commit detected with changes to CSV files. Proceeding with update."
@@ -75,18 +75,18 @@ jobs:
         run: |
           # Convert to protobuf
           dart run bin/convert_csv_to_protobuf.dart
-          
+
           # Update package version
           dart run bin/update_version.dart
-          
+
           # Commit changes
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add .
           git commit -m "Update data to latest version (Source commit date: ${{ steps.check_commits.outputs.commit_date }})"
-          
-          # Push to GitHub
-          git push
+
+          # Push to GitHub using the PAT
+          git push https://${{ secrets.GITHUB_TOKEN }}@github.com/kartikey321/country_data_kit.git HEAD:main
 
       - name: Update README with latest metrics
         if: steps.check_changes.outcome == 'success'
@@ -104,7 +104,7 @@ jobs:
         run: |
           git add README.md CHANGELOG.md
           git commit -m "Update README and CHANGELOG with latest data updates"
-          git push
+          git push https://${{ secrets.GITHUB_TOKEN }}@github.com/kartikey321/country_data_kit.git HEAD:main
 
       - name: Publish to pub.dev
         if: steps.check_changes.outcome == 'success'
