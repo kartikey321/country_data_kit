@@ -14,18 +14,27 @@ class ServerDataProvider {
 
   ServerDataProvider._internal();
 
-  late final Countries _countries;
-  late final States _states;
-  late final Cities _cities;
+  Countries? _countries;
+  States? _states;
+  Cities? _cities;
 
   Future<void> initialize() async {
     await Future.wait([
-      _loadData('assets/protobuf/countries.pb',
-          (bytes) => _countries = Countries.fromBuffer(bytes)),
-      _loadData(
-          'assets/protobuf/states.pb', (bytes) => _states = States.fromBuffer(bytes)),
-      _loadData(
-          'assets/protobuf/cities.pb', (bytes) => _cities = Cities.fromBuffer(bytes)),
+      _loadData('assets/protobuf/countries.pb', (bytes) {
+        if (_countries == null) {
+          _countries = Countries.fromBuffer(bytes);
+        }
+      }),
+      _loadData('assets/protobuf/countries.pb', (bytes) {
+        if (_states == null) {
+          _states = States.fromBuffer(bytes);
+        }
+      }),
+      _loadData('assets/protobuf/countries.pb', (bytes) {
+        if (_cities == null) {
+          _cities = Cities.fromBuffer(bytes);
+        }
+      }),
     ]);
   }
 
@@ -34,26 +43,28 @@ class ServerDataProvider {
     parseFunction(bytes);
   }
 
-  List<Country> getAllCountries() => _countries.countries;
-  List<City> getAllCities() => _cities.cities;
-  List<State> getAllStates() => _states.states;
+  List<Country> getAllCountries() => _countries?.countries ?? [];
+  List<City> getAllCities() => _cities?.cities ?? [];
+  List<State> getAllStates() => _states?.states ?? [];
 
   List<State> getStatesForCountry(int countryId) =>
-      _states.states.where((state) => state.countryId == countryId).toList();
+      _states?.states.where((state) => state.countryId == countryId).toList() ??
+      [];
 
   List<City> getCitiesForState(int stateId) =>
-      _cities.cities.where((city) => city.stateId == stateId).toList();
+      _cities?.cities.where((city) => city.stateId == stateId).toList() ?? [];
 
   List<City> getCitiesForCountry(int countryId) =>
-      _cities.cities.where((city) => city.countryId == countryId).toList();
+      _cities?.cities.where((city) => city.countryId == countryId).toList() ??
+      [];
 
   Country? getCountryByIso2(String iso2) =>
-      _countries.countries.containsWithCondition(
+      _countries?.countries.containsWithCondition(
         (country) => country.iso2 == iso2,
       );
 
   State? getStateByCode(int countryId, String stateCode) =>
-      _states.states.containsWithCondition(
+      _states?.states.containsWithCondition(
         (state) => state.countryId == countryId && state.stateCode == stateCode,
       );
 }
