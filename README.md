@@ -31,8 +31,6 @@ _Last benchmark run: 2024-11-10T17:23:53.430439_
 
 
 
-
-... (rest of the README content)
 ## Why Choose This Package?
 
 Unlike other packages that use static JSON data, our Country-State-City Database Package utilizes Protocol Buffers (protobuf) for data storage and retrieval. This approach offers several advantages:
