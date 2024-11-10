@@ -59,9 +59,11 @@ jobs:
       - name: Download latest CSV files
         if: steps.check_commits.outputs.update_needed == 'true'
         run: |
+          ls
           for file in ${{ env.CSV_FILES }}; do
             curl -O "https://raw.githubusercontent.com/${{ env.SOURCE_REPO }}/master/$file"
           done
+          ls
 
       - name: Check for changes in CSV files
         if: steps.check_commits.outputs.update_needed == 'true'
@@ -84,6 +86,7 @@ jobs:
           git config --local user.name "GitHub Action"
           git add .
           git commit -m "Update data to latest version (Source commit date: ${{ steps.check_commits.outputs.commit_date }})"
+
 
 
           # Push to GitHub using the PAT
