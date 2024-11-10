@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:country_data_kit/src/generated/generated.dart';
 import 'package:csv/csv.dart';
 
@@ -13,16 +14,20 @@ void main() async {
 Future<void> convertCountries() async {
   print('Converting countries...');
   final csvFile = File('countries.csv');
-  
+
   if (!await csvFile.exists()) {
     print('Error: countries.csv not found.');
     return;
   }
-  
+
   final csvString = await csvFile.readAsString();
   final csvList = const CsvToListConverter().convert(csvString);
 
   final countries = Countries();
+
+  print('Countries length: {$csvList.length}');
+  print(csvList.elementAtOrNull(2));
+
   for (var row in csvList.skip(1)) {
     print('Processing country row: $row');
     final country = Country()
@@ -54,7 +59,7 @@ Future<void> convertCountries() async {
 Future<void> convertStates() async {
   print('Converting states...');
   final csvFile = File('states.csv');
-  
+
   if (!await csvFile.exists()) {
     print('Error: states.csv not found.');
     return;
@@ -62,6 +67,8 @@ Future<void> convertStates() async {
 
   final csvString = await csvFile.readAsString();
   final csvList = const CsvToListConverter().convert(csvString);
+  print('States length: {$csvList.length}');
+  print(csvList.elementAtOrNull(2));
 
   final states = States();
   for (var row in csvList.skip(1)) {
@@ -88,7 +95,7 @@ Future<void> convertStates() async {
 Future<void> convertCities() async {
   print('Converting cities...');
   final csvFile = File('cities.csv');
-  
+
   if (!await csvFile.exists()) {
     print('Error: cities.csv not found.');
     return;
@@ -97,6 +104,8 @@ Future<void> convertCities() async {
   final csvString = await csvFile.readAsString();
   final csvList = const CsvToListConverter().convert(csvString);
 
+  print('Cities length: {$csvList.length}');
+  print(csvList.elementAtOrNull(2));
   final cities = Cities();
   for (var row in csvList.skip(1)) {
     print('Processing city row: $row');
