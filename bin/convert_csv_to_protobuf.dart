@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:country_data_kit/src/generated/generated.dart';
 import 'package:csv/csv.dart';
 
@@ -59,6 +60,7 @@ Future<void> convertCountries() async {
   final outputFilePath = '${outputDir.path}/countries.pb';
   await deleteIfExists(outputFilePath); // Delete if exists
   final output = File(outputFilePath);
+  print(countries.writeToBuffer());
   await output.writeAsBytes(countries.writeToBuffer());
   print('Countries protobuf saved to ${output.path}');
 }
