@@ -32,10 +32,7 @@ Future<void> convertCountries() async {
   final csvList = const CsvToListConverter().convert(csvString);
   final countries = Countries();
 
-  print('Countries length: ${csvList.length}');
-
   for (var row in csvList.skip(1)) {
-    print('Processing country row: $row');
     final country = Country()
       ..id = int.tryParse(row[0].toString()) ?? 0
       ..name = row[1] ?? ''
@@ -50,6 +47,7 @@ Future<void> convertCountries() async {
       ..wikiDataId = row[10] ?? '';
     countries.countries.add(country);
   }
+  print('Countries length: ${countries.countries.length}');
 
   final outputDir = Directory('assets/protobuf');
   if (!await outputDir.exists()) {
@@ -77,11 +75,8 @@ Future<void> convertStates() async {
   final csvString = await csvFile.readAsString();
   final csvList = const CsvToListConverter().convert(csvString);
 
-  print('States length: ${csvList.length}');
-
   final states = States();
   for (var row in csvList.skip(1)) {
-    print('Processing state row: $row');
     final state = State()
       ..id = int.tryParse(row[0].toString()) ?? 0
       ..name = row[1] ?? ''
@@ -89,6 +84,7 @@ Future<void> convertStates() async {
       ..countryId = int.tryParse(row[2].toString()) ?? 0;
     states.states.add(state);
   }
+  print('States length: ${states.states.length}');
 
   final outputDir = Directory('assets/protobuf');
   if (!await outputDir.exists()) {
@@ -99,6 +95,7 @@ Future<void> convertStates() async {
   final outputFilePath = '${outputDir.path}/states.pb';
   await deleteIfExists(outputFilePath); // Delete if exists
   final output = File(outputFilePath);
+  print(states.writeToBuffer());
   await output.writeAsBytes(states.writeToBuffer());
   print('States protobuf saved to ${output.path}');
 }
@@ -115,11 +112,8 @@ Future<void> convertCities() async {
   final csvString = await csvFile.readAsString();
   final csvList = const CsvToListConverter().convert(csvString);
 
-  print('Cities length: ${csvList.length}');
-
   final cities = Cities();
   for (var row in csvList.skip(1)) {
-    print('Processing city row: $row');
     final city = City()
       ..id = int.parse(row[0].toString())
       ..name = row[1]
@@ -129,6 +123,7 @@ Future<void> convertCities() async {
       ..longitude = row[9].toString();
     cities.cities.add(city);
   }
+  print('Cities length: ${cities.cities.length}');
 
   final outputDir = Directory('assets/protobuf');
   if (!await outputDir.exists()) {
@@ -139,6 +134,7 @@ Future<void> convertCities() async {
   final outputFilePath = '${outputDir.path}/cities.pb';
   await deleteIfExists(outputFilePath); // Delete if exists
   final output = File(outputFilePath);
+  print(cities.writeToBuffer());
   await output.writeAsBytes(cities.writeToBuffer());
   print('Cities protobuf saved to ${output.path}');
 }
