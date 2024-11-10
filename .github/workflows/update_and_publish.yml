@@ -113,4 +113,10 @@ jobs:
 
       - name: Publish to pub.dev
         if: steps.check_changes.outcome == 'success'
-        run: dart pub publish --force
+        uses: k-paxian/dart-package-publisher@master
+        with:
+          credentialJson: ${{ secrets.CREDENTIAL_JSON }}
+          flutter: false
+          skipTests: true
+          accessToken: ''
+          refreshToken: ''
