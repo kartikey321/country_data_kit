@@ -23,8 +23,6 @@ message State {
   string name = 2;
   string state_code = 3;
   int32 country_id = 4;
-  string country_name = 5;
-  string wikiDataId = 6;
 }
 
 message States {
@@ -35,12 +33,9 @@ message City {
   int32 id = 1;
   string name = 2;
   int32 state_id = 3;
-  string state_name = 4;
-  int32 country_id = 5;
-  string country_name = 6;
-  string latitude = 7;
-  string longitude = 8;
-  string wikiDataId = 9;
+  int32 country_id = 4;
+  string latitude = 5;
+  string longitude = 6;
 }
 
 message Cities {

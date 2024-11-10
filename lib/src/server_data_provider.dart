@@ -25,17 +25,35 @@ class ServerDataProvider {
           _countries = Countries.fromBuffer(bytes);
         }
       }),
-      _loadData('assets/protobuf/countries.pb', (bytes) {
+      _loadData('assets/protobuf/states.pb', (bytes) {
         if (_states == null) {
           _states = States.fromBuffer(bytes);
         }
       }),
-      _loadData('assets/protobuf/countries.pb', (bytes) {
+      _loadData('assets/protobuf/cities.pb', (bytes) {
         if (_cities == null) {
           _cities = Cities.fromBuffer(bytes);
         }
       }),
     ]);
+  }
+
+  Future<void> initializeSync() async {
+    await _loadData('assets/protobuf/countries.pb', (bytes) {
+      if (_countries == null) {
+        _countries = Countries.fromBuffer(bytes);
+      }
+    });
+    await _loadData('assets/protobuf/states.pb', (bytes) {
+      if (_states == null) {
+        _states = States.fromBuffer(bytes);
+      }
+    });
+    await _loadData('assets/protobuf/cities.pb', (bytes) {
+      if (_cities == null) {
+        _cities = Cities.fromBuffer(bytes);
+      }
+    });
   }
 
   Future<void> _loadData(String path, Function(List<int>) parseFunction) async {
