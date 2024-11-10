@@ -1,3 +1,6 @@
+## 0.0.12 - 2024-11-10
+- Data updated based on the source repository (commit date: 2024-10-19T12:27:41Z)
+- Improved performance and bug fixes
 ## 0.0.11 - 2024-11-10
 - Data updated based on the source repository (commit date: 2024-10-19T12:27:41Z)
 - Improved performance and bug fixes
