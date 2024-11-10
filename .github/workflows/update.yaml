@@ -85,10 +85,6 @@ jobs:
           git add .
           git commit -m "Update data to latest version (Source commit date: ${{ steps.check_commits.outputs.commit_date }})"
 
-          # Delete CSV files
-          rm -f csv/countries.csv
-          rm -f csv/states.csv
-          rm -f csv/cities.csv
 
           # Push to GitHub using the PAT
           git push https://${{ secrets.PAT }}@github.com/kartikey321/country_data_kit.git HEAD:main
