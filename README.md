@@ -18,17 +18,19 @@ A high-performance Dart package for efficient handling of country, state, and ci
 
 
 
+
 ## Performance Benchmarks
 
 <!-- BENCHMARK_RESULTS_START -->
 | Metric | Value |
 |--------|-------|
-| Data Load Time | 1 ms |
-| Memory Usage | 181.73046875 MB |
-| Average Query Time | 3.193 µs |
+| Data Load Time | 0 ms |
+| Memory Usage | 187.0625 MB |
+| Average Query Time | 3.608 µs |
 
-_Last benchmark run: 2024-11-10T18:35:48.263401_
+_Last benchmark run: 2024-11-10T18:42:46.256224_
 <!-- BENCHMARK_RESULTS_END -->
+
 
 
 
