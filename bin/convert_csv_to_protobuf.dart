@@ -3,19 +3,28 @@ import 'package:country_data_kit/src/generated/generated.dart';
 import 'package:csv/csv.dart';
 
 void main() async {
+  print('Starting data conversion...');
   await convertCountries();
   await convertStates();
   await convertCities();
+  print('Data conversion completed.');
 }
 
 Future<void> convertCountries() async {
-  final csvFile = File('countries.csv'); // Adjusted file path
+  print('Converting countries...');
+  final csvFile = File('countries.csv');
+  
+  if (!await csvFile.exists()) {
+    print('Error: countries.csv not found.');
+    return;
+  }
+  
   final csvString = await csvFile.readAsString();
   final csvList = const CsvToListConverter().convert(csvString);
 
   final countries = Countries();
   for (var row in csvList.skip(1)) {
-    // Skip header
+    print('Processing country row: $row');
     final country = Country()
       ..id = int.tryParse(row[0].toString()) ?? 0
       ..name = row[1] ?? ''
@@ -31,70 +40,83 @@ Future<void> convertCountries() async {
     countries.countries.add(country);
   }
 
-  // Ensure the directory exists before saving
   final outputDir = Directory('assets/protobuf');
   if (!await outputDir.exists()) {
+    print('Creating output directory: ${outputDir.path}');
     await outputDir.create(recursive: true);
   }
 
   final output = File('${outputDir.path}/countries.pb');
   await output.writeAsBytes(countries.writeToBuffer());
+  print('Countries protobuf saved to ${output.path}');
 }
 
 Future<void> convertStates() async {
-  final csvFile = File('states.csv'); // Adjusted file path
+  print('Converting states...');
+  final csvFile = File('states.csv');
+  
+  if (!await csvFile.exists()) {
+    print('Error: states.csv not found.');
+    return;
+  }
+
   final csvString = await csvFile.readAsString();
   final csvList = const CsvToListConverter().convert(csvString);
 
   final states = States();
   for (var row in csvList.skip(1)) {
-    // Skip header
+    print('Processing state row: $row');
     final state = State()
       ..id = int.tryParse(row[0].toString()) ?? 0
       ..name = row[1] ?? ''
-      ..stateCode = row[3].toString() // Adjusted index for stateCode
-      ..countryId = int.tryParse(row[2].toString()) ?? 0
-;
+      ..stateCode = row[3].toString()
+      ..countryId = int.tryParse(row[2].toString()) ?? 0;
     states.states.add(state);
   }
 
-  // Ensure the directory exists before saving
   final outputDir = Directory('assets/protobuf');
   if (!await outputDir.exists()) {
+    print('Creating output directory: ${outputDir.path}');
     await outputDir.create(recursive: true);
   }
 
   final output = File('${outputDir.path}/states.pb');
   await output.writeAsBytes(states.writeToBuffer());
+  print('States protobuf saved to ${output.path}');
 }
 
 Future<void> convertCities() async {
-  final csvFile = File('cities.csv'); // Adjust this if the CSV file is located in a different directory
+  print('Converting cities...');
+  final csvFile = File('cities.csv');
+  
+  if (!await csvFile.exists()) {
+    print('Error: cities.csv not found.');
+    return;
+  }
+
   final csvString = await csvFile.readAsString();
   final csvList = const CsvToListConverter().convert(csvString);
 
   final cities = Cities();
   for (var row in csvList.skip(1)) {
-    // Skip header
+    print('Processing city row: $row');
     final city = City()
       ..id = int.parse(row[0].toString())
       ..name = row[1]
-      ..stateId = int.parse(row[2].toString()) // Correctly mapped
-      // ..stateCode = row[3].toString() // Use state code instead of state name
-      ..countryId = int.parse(row[5].toString()) // Parse countryId correctly
-      // ..countryCode = row[5].toString() // Use country code instead of country name
-      ..latitude = row[8].toString() // Correct index for latitude
-      ..longitude = row[9].toString() // Correct index for longitude
-; // Correct index for wikiDataId
+      ..stateId = int.parse(row[2].toString())
+      ..countryId = int.parse(row[5].toString())
+      ..latitude = row[8].toString()
+      ..longitude = row[9].toString();
     cities.cities.add(city);
   }
 
-  // Ensure the directory exists before saving
   final outputDir = Directory('assets/protobuf');
   if (!await outputDir.exists()) {
+    print('Creating output directory: ${outputDir.path}');
     await outputDir.create(recursive: true);
   }
 
   final output = File('${outputDir.path}/cities.pb');
   await output.writeAsBytes(cities.writeToBuffer());
+  print('Cities protobuf saved to ${output.path}');
 }
