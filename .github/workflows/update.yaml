@@ -1,0 +1,112 @@
+name: Check for updates and publish
+
+on:
+  schedule:
+    - cron: "0 0 1 * *" # Run at midnight on the first day of every month
+  workflow_dispatch: # Allow manual triggers
+
+env:
+  SOURCE_REPO: "dr5hn/countries-states-cities-database"
+  LAST_COMMIT_FILE: ".last_processed_commit"
+  CSV_FILES: "csv/countries.csv csv/states.csv csv/cities.csv"
+
+jobs:
+  check-and-update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # Fetch all history for all branches and tags
+
+      - name: Set up Dart
+        uses: dart-lang/setup-dart@v1
+
+      - name: Install dependencies
+        run: dart pub get
+
+      - name: Check for new commits
+        id: check_commits
+        run: |
+          # Fetch the latest commit information from the source repository
+          LATEST_COMMIT_INFO=$(curl -s "https://api.github.com/repos/${{ env.SOURCE_REPO }}/commits/master")
+
+          # Extract the SHA and date of the latest commit
+          LATEST_COMMIT_SHA=$(echo $LATEST_COMMIT_INFO | jq -r .sha)
+          LATEST_COMMIT_DATE=$(echo $LATEST_COMMIT_INFO | jq -r .commit.committer.date)
+
+          # Check if any of the CSV files were modified
+          CSV_FILES_CHANGED=$(echo $LATEST_COMMIT_INFO | jq -r '.files[] | select(.filename | inside("${{ env.CSV_FILES }}")) | .filename')
+
+          # Read the last processed commit SHA (if it exists)
+          if [ -f "${{ env.LAST_COMMIT_FILE }}" ]; then
+            LAST_PROCESSED_COMMIT=$(cat "${{ env.LAST_COMMIT_FILE }}")
+          else
+            LAST_PROCESSED_COMMIT="null"
+          fi
+
+          # Compare the commits and check if any CSV files were changed
+          if [ "$LATEST_COMMIT_SHA" != "$LAST_PROCESSED_COMMIT" ] ; then
+            echo "New commit detected with changes to CSV files. Proceeding with update."
+            echo "Changed files: $CSV_FILES_CHANGED"
+            echo "::set-output name=update_needed::true"
+            echo "$LATEST_COMMIT_SHA" > "${{ env.LAST_COMMIT_FILE }}"
+            echo "::set-output name=commit_date::$LATEST_COMMIT_DATE"
+          else
+            echo "No new commits affecting CSV files. Skipping update."
+            echo "::set-output name=update_needed::false"
+          fi
+
+      - name: Download latest CSV files
+        if: steps.check_commits.outputs.update_needed == 'true'
+        run: |
+          for file in ${{ env.CSV_FILES }}; do
+            curl -O "https://raw.githubusercontent.com/${{ env.SOURCE_REPO }}/master/$file"
+          done
+
+      - name: Check for changes in CSV files
+        if: steps.check_commits.outputs.update_needed == 'true'
+        id: check_changes
+        run: |
+          dart run bin/check_hash.dart
+        continue-on-error: true
+
+      - name: Update data if changed
+        if: steps.check_changes.outcome == 'success'
+        run: |
+          # Convert to protobuf
+          dart run bin/convert_csv_to_protobuf.dart
+
+          # Update package version
+          dart run bin/update_version.dart
+
+          # Commit changes
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .
+          git commit -m "Update data to latest version (Source commit date: ${{ steps.check_commits.outputs.commit_date }})"
+
+          # Delete CSV files
+          rm -f csv/countries.csv
+          rm -f csv/states.csv
+          rm -f csv/cities.csv
+
+          # Push to GitHub using the PAT
+          git push https://${{ secrets.PAT }}@github.com/kartikey321/country_data_kit.git HEAD:main
+
+      - name: Update README with latest metrics
+        if: steps.check_changes.outcome == 'success'
+        run: |
+          dart run bin/update_readme.dart
+
+      - name: Update CHANGELOG with latest data updates
+        if: steps.check_changes.outcome == 'success'
+        run: |
+          export COMMIT_DATE=${{ steps.check_commits.outputs.commit_date }}
+          dart run bin/update_changelog.dart
+
+      - name: Commit updated README and CHANGELOG
+        if: steps.check_changes.outcome == 'success'
+        run: |
+          git add README.md CHANGELOG.md
+          git commit -m "Update README and CHANGELOG with latest data updates"
+          git push https://${{ secrets.GITHUB_TOKEN }}@github.com/kartikey321/country_data_kit.git HEAD:main
