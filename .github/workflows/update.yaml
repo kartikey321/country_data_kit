@@ -76,6 +76,7 @@ jobs:
         if: steps.check_changes.outcome == 'success'
         run: |
           # Convert to protobuf
+          ls
           dart run bin/convert_csv_to_protobuf.dart
 
           # Update package version
