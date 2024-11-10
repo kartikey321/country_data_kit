@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:country_data_kit/src/generated/generated.dart';
 import 'package:csv/csv.dart';
 
@@ -9,6 +8,14 @@ void main() async {
   await convertStates();
   await convertCities();
   print('Data conversion completed.');
+}
+
+Future<void> deleteIfExists(String path) async {
+  final file = File(path);
+  if (await file.exists()) {
+    await file.delete();
+    print('Deleted existing file: $path');
+  }
 }
 
 Future<void> convertCountries() async {
@@ -22,11 +29,9 @@ Future<void> convertCountries() async {
 
   final csvString = await csvFile.readAsString();
   final csvList = const CsvToListConverter().convert(csvString);
-
   final countries = Countries();
 
-  print('Countries length: {$csvList.length}');
-  print(csvList.elementAtOrNull(2));
+  print('Countries length: ${csvList.length}');
 
   for (var row in csvList.skip(1)) {
     print('Processing country row: $row');
@@ -51,7 +56,9 @@ Future<void> convertCountries() async {
     await outputDir.create(recursive: true);
   }
 
-  final output = File('${outputDir.path}/countries.pb');
+  final outputFilePath = '${outputDir.path}/countries.pb';
+  await deleteIfExists(outputFilePath); // Delete if exists
+  final output = File(outputFilePath);
   await output.writeAsBytes(countries.writeToBuffer());
   print('Countries protobuf saved to ${output.path}');
 }
@@ -67,8 +74,8 @@ Future<void> convertStates() async {
 
   final csvString = await csvFile.readAsString();
   final csvList = const CsvToListConverter().convert(csvString);
-  print('States length: {$csvList.length}');
-  print(csvList.elementAtOrNull(2));
+
+  print('States length: ${csvList.length}');
 
   final states = States();
   for (var row in csvList.skip(1)) {
@@ -87,7 +94,9 @@ Future<void> convertStates() async {
     await outputDir.create(recursive: true);
   }
 
-  final output = File('${outputDir.path}/states.pb');
+  final outputFilePath = '${outputDir.path}/states.pb';
+  await deleteIfExists(outputFilePath); // Delete if exists
+  final output = File(outputFilePath);
   await output.writeAsBytes(states.writeToBuffer());
   print('States protobuf saved to ${output.path}');
 }
@@ -104,8 +113,8 @@ Future<void> convertCities() async {
   final csvString = await csvFile.readAsString();
   final csvList = const CsvToListConverter().convert(csvString);
 
-  print('Cities length: {$csvList.length}');
-  print(csvList.elementAtOrNull(2));
+  print('Cities length: ${csvList.length}');
+
   final cities = Cities();
   for (var row in csvList.skip(1)) {
     print('Processing city row: $row');
@@ -125,7 +134,9 @@ Future<void> convertCities() async {
     await outputDir.create(recursive: true);
   }
 
-  final output = File('${outputDir.path}/cities.pb');
+  final outputFilePath = '${outputDir.path}/cities.pb';
+  await deleteIfExists(outputFilePath); // Delete if exists
+  final output = File(outputFilePath);
   await output.writeAsBytes(cities.writeToBuffer());
   print('Cities protobuf saved to ${output.path}');
 }
