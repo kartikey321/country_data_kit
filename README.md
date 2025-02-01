@@ -8,11 +8,12 @@ A high-performance Dart package for efficient handling of country, state, and ci
 ## Data Statistics
 
 <!-- DATA_STATS_START -->
-- Last Updated: 2025-01-01
+- Last Updated: 2025-02-01
 - Total Countries: 0
 - Total States: 0
 - Total Cities: 0
 <!-- DATA_STATS_END -->
+
 
 
 
@@ -33,12 +34,13 @@ A high-performance Dart package for efficient handling of country, state, and ci
 <!-- BENCHMARK_RESULTS_START -->
 | Metric | Value |
 |--------|-------|
-| Data Load Time | 1 ms |
-| Memory Usage | 185.73828125 MB |
-| Average Query Time | 4.083 µs |
+| Data Load Time | 0 ms |
+| Memory Usage | 188.984375 MB |
+| Average Query Time | 3.439 µs |
 
-_Last benchmark run: 2025-01-01T00:44:48.764349_
+_Last benchmark run: 2025-02-01T00:42:43.216124_
 <!-- BENCHMARK_RESULTS_END -->
+
 
 
 
