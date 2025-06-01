@@ -1,3 +1,6 @@
+## 0.0.22 - 2025-06-01
+- Data updated based on the source repository (commit date: 2025-05-28T08:04:13Z)
+- Improved performance and bug fixes
 ## 0.0.21 - 2025-05-01
 - Data updated based on the source repository (commit date: 2025-04-03T06:03:09Z)
 - Improved performance and bug fixes
